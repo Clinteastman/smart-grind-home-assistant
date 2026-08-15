@@ -1,0 +1,97 @@
+{
+  "config": {
+    "abort": {
+      "already_configured": "This grinder is already configured.",
+      "cannot_connect": "Could not connect to the discovered grinder."
+    },
+    "error": {
+      "cannot_connect": "Could not connect to the grinder.",
+      "invalid_device": "The device does not provide the Smart Grind local API.",
+      "unknown": "An unexpected error occurred."
+    },
+    "step": {
+      "confirm": {
+        "description": "Set up the {model} discovered at {host}?",
+        "title": "Discovered Smart Grind by Weight"
+      },
+      "user": {
+        "data": {
+          "host": "Hostname or IP address"
+        },
+        "description": "Enter the network address shown on the grinder's Wi-Fi screen.",
+        "title": "Add Smart Grind by Weight"
+      }
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "grinding": {
+        "name": "Grinding"
+      },
+      "motor": {
+        "name": "Motor"
+      }
+    },
+    "button": {
+      "dismiss": {
+        "name": "Dismiss result"
+      },
+      "start": {
+        "name": "Start selected profile"
+      },
+      "start_manual": {
+        "name": "Start manual grind"
+      },
+      "stop": {
+        "name": "Stop grind"
+      },
+      "tare": {
+        "name": "Tare scale"
+      }
+    },
+    "select": {
+      "grind_mode": {
+        "name": "Grind mode"
+      },
+      "profile": {
+        "name": "Profile"
+      }
+    },
+    "sensor": {
+      "flow": {
+        "name": "Flow"
+      },
+      "free_heap": {
+        "name": "Free memory"
+      },
+      "phase": {
+        "name": "Phase",
+        "state": {
+          "coasting": "Coasting",
+          "completed": "Completed",
+          "final_settling": "Final settling",
+          "grinding": "Grinding",
+          "idle": "Idle",
+          "paused": "Paused",
+          "preparing": "Preparing",
+          "priming": "Priming",
+          "timeout": "Timed out"
+        }
+      },
+      "progress": {
+        "name": "Progress"
+      },
+      "target_time": {
+        "name": "Target time"
+      },
+      "target_weight": {
+        "name": "Target weight"
+      },
+      "weight": {
+        "name": "Weight"
+      }
+    }
+  },
+  "title": "Smart Grind by Weight"
+}
+

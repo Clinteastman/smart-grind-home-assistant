@@ -1,0 +1,28 @@
+[project]
+name = "smart-grind-home-assistant"
+version = "0.1.0"
+description = "Home Assistant integration for Smart Grind by Weight"
+requires-python = ">=3.14"
+dependencies = ["aiohttp>=3.11"]
+
+[project.optional-dependencies]
+test = [
+  "homeassistant==2026.8.2",
+  "pytest>=8.3",
+  "pytest-asyncio>=0.25",
+  "pytest-cov>=6.0",
+  "pytest-homeassistant-custom-component==0.13.356",
+  "ruff>=0.12"
+]
+
+[tool.pytest.ini_options]
+addopts = "--strict-markers --cov=custom_components.smart_grind --cov-report=term-missing"
+asyncio_mode = "auto"
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py314"
+
+[tool.ruff.lint]
+select = ["ASYNC", "B", "E", "F", "I", "SIM", "UP"]

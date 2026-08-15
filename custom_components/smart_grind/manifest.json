@@ -1,14 +1,13 @@
 {
+  "domain": "smart_grind",
+  "name": "Smart Grind by Weight",
   "codeowners": ["@Clinteastman"],
   "config_flow": true,
   "documentation": "https://github.com/Clinteastman/smart-grind-home-assistant",
-  "domain": "smart_grind",
   "integration_type": "device",
   "iot_class": "local_push",
   "issue_tracker": "https://github.com/Clinteastman/smart-grind-home-assistant/issues",
-  "name": "Smart Grind by Weight",
   "requirements": [],
   "version": "0.1.0",
   "zeroconf": ["_smartgrind._tcp.local."]
 }
-

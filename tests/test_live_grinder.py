@@ -1,4 +1,4 @@
-"""Opt-in, read-only acceptance test against a physical Smart Grind device."""
+"""Opt-in acceptance test against a physical Smart Grind device."""
 
 from __future__ import annotations
 
@@ -83,7 +83,22 @@ async def test_live_grinder_loads_and_publishes_state(
     if LIVE_COMMAND_TEST:
         assert coordinator.data.phase == "idle"
         assert coordinator.data.motor_running is False
+        settings = coordinator.client.settings
+        assert settings is not None
+        original_profile = settings.current_profile
+        original_mode = settings.grind_mode
+
+        # Exercise accepted controller-backed commands without changing the
+        # user's effective configuration or starting the motor.
+        await coordinator.async_select_profile(original_profile)
+        await coordinator.async_set_mode(original_mode)
+        refreshed = await coordinator.client.async_get_settings()
+        assert refreshed.current_profile == original_profile
+        assert refreshed.grind_mode == original_mode
+
         with pytest.raises(SmartGrindCommandError, match="grinder is not active"):
             await coordinator.async_command("stop")
+        with pytest.raises(SmartGrindCommandError, match="nothing to dismiss"):
+            await coordinator.async_command("dismiss")
 
     assert await hass.config_entries.async_unload(entry.entry_id)

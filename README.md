@@ -57,7 +57,8 @@ python3 -m venv .venv
 
 HACS validation and Hassfest run in GitHub Actions. See [AGENTS.md](AGENTS.md) for the firmware/integration boundary and safety rules.
 
-An opt-in read-only acceptance test can load the integration against a physical grinder without sending any control command:
+An opt-in acceptance test loads the integration against a physical grinder
+without sending any control command by default:
 
 ```bash
 SMART_GRIND_LIVE_HOST=192.168.50.160 \
@@ -65,9 +66,11 @@ SMART_GRIND_LIVE_DEVICE_ID=684a8d858428 \
 .venv/bin/pytest -m live tests/test_live_grinder.py
 ```
 
-To verify two-way command acknowledgement as well, set `SMART_GRIND_LIVE_COMMAND_TEST=1`.
-The test first proves the grinder is idle and its motor is off, then sends only a `stop`
-request and expects the firmware to reject it as already inactive. It never starts the motor.
+To verify two-way command acknowledgement as well, set
+`SMART_GRIND_LIVE_COMMAND_TEST=1`. The test first proves the grinder is idle and
+its motor is off, round-trips its existing profile and mode without changing
+their effective values, then verifies safe `stop` and `dismiss` rejection paths.
+It never starts the motor.
 
 ## Related projects and credits
 

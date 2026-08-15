@@ -15,6 +15,8 @@ A native, local-push Home Assistant integration for the maintained [Smart Grind 
 - Weight/time mode selection on compatible firmware
 - Start selected profile, manual start, stop, tare, and dismiss-result controls
 - Recorder-friendly throttling of high-frequency scale data while phase and motor changes remain immediate
+- Privacy-safe downloadable diagnostics with local addresses and hardware identity redacted
+- A reconfigure flow for updating the grinder address while verifying it is the same device
 
 All start and stop requests pass through the firmware's existing grind controller and safety checks. The integration does not control the motor GPIO directly.
 

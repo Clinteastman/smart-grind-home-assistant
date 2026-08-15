@@ -97,3 +97,35 @@ class SmartGrindConfigFlow(ConfigFlow, domain=DOMAIN):
 
         schema = vol.Schema({vol.Required(CONF_HOST): str})
         return self.async_show_form(step_id="user", data_schema=schema, errors=errors)
+
+    async def async_step_reconfigure(
+        self, user_input: dict[str, Any] | None = None
+    ) -> ConfigFlowResult:
+        """Update the network address while preserving device identity."""
+        entry = self._get_reconfigure_entry()
+        errors: dict[str, str] = {}
+        if user_input is not None:
+            host = str(user_input[CONF_HOST]).strip().rstrip(".")
+            try:
+                device_id, _ = await self._async_probe(host, DEFAULT_PORT)
+            except SmartGrindConnectionError:
+                errors["base"] = "cannot_connect"
+            except SmartGrindProtocolError:
+                errors["base"] = "invalid_device"
+            except Exception:
+                _LOGGER.exception("Unexpected error reconfiguring Smart Grind at %s", host)
+                errors["base"] = "unknown"
+            else:
+                await self.async_set_unique_id(device_id)
+                self._abort_if_unique_id_mismatch()
+                return self.async_update_reload_and_abort(
+                    entry,
+                    data_updates={
+                        CONF_HOST: host,
+                        CONF_PORT: DEFAULT_PORT,
+                        CONF_DEVICE_ID: device_id,
+                    },
+                )
+
+        schema = vol.Schema({vol.Required(CONF_HOST, default=entry.data[CONF_HOST]): str})
+        return self.async_show_form(step_id="reconfigure", data_schema=schema, errors=errors)

@@ -14,6 +14,13 @@
         "description": "Set up the {model} discovered at {host}?",
         "title": "Discovered Smart Grind by Weight"
       },
+      "reconfigure": {
+        "data": {
+          "host": "Hostname or IP address"
+        },
+        "description": "Enter the grinder's new network address. Its hardware identity must match the configured grinder.",
+        "title": "Reconfigure Smart Grind by Weight"
+      },
       "user": {
         "data": {
           "host": "Hostname or IP address"
@@ -94,4 +101,3 @@
   },
   "title": "Smart Grind by Weight"
 }
-

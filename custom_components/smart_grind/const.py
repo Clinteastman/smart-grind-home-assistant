@@ -5,6 +5,7 @@ from typing import Final
 DOMAIN: Final = "smart_grind"
 DEFAULT_NAME: Final = "Smart Grind by Weight"
 DEFAULT_PORT: Final = 80
+CONNECTION_TIMEOUT_SECONDS: Final = 8.0
 
 CONF_DEVICE_ID: Final = "device_id"
 

@@ -11,7 +11,7 @@ from typing import Any
 from aiohttp import ClientError, ClientSession, ClientWebSocketResponse, WSMsgType
 from yarl import URL
 
-from .const import COMMAND_TIMEOUT_SECONDS, DEFAULT_PORT
+from .const import COMMAND_TIMEOUT_SECONDS, CONNECTION_TIMEOUT_SECONDS, DEFAULT_PORT
 from .models import (
     SmartGrindCommandError,
     SmartGrindConnectionError,
@@ -45,9 +45,10 @@ class SmartGrindClient:
     async def async_get_status(self) -> SmartGrindDeviceStatus:
         """Fetch device identity, version, and capabilities."""
         try:
-            async with self._session.get(self._url("/api/v1/status")) as response:
-                response.raise_for_status()
-                payload = await response.json(content_type=None)
+            async with asyncio.timeout(CONNECTION_TIMEOUT_SECONDS):
+                async with self._session.get(self._url("/api/v1/status")) as response:
+                    response.raise_for_status()
+                    payload = await response.json(content_type=None)
         except (TimeoutError, ClientError, json.JSONDecodeError) as exc:
             raise SmartGrindConnectionError(f"Cannot reach Smart Grind at {self.host}") from exc
         if not isinstance(payload, dict) or payload.get("api") != "v1":
@@ -58,9 +59,10 @@ class SmartGrindClient:
     async def async_get_settings(self) -> SmartGrindSettings:
         """Fetch profile names, targets, and active mode."""
         try:
-            async with self._session.get(self._url("/api/v1/settings")) as response:
-                response.raise_for_status()
-                payload = await response.json(content_type=None)
+            async with asyncio.timeout(CONNECTION_TIMEOUT_SECONDS):
+                async with self._session.get(self._url("/api/v1/settings")) as response:
+                    response.raise_for_status()
+                    payload = await response.json(content_type=None)
         except (TimeoutError, ClientError, json.JSONDecodeError) as exc:
             raise SmartGrindConnectionError(f"Cannot read settings from {self.host}") from exc
         if not isinstance(payload, dict) or payload.get("api") != "v1":
@@ -72,9 +74,10 @@ class SmartGrindClient:
         """Open the local push connection."""
         await self.async_disconnect()
         try:
-            self._websocket = await self._session.ws_connect(
-                self._url("/ws"), heartbeat=20, autoping=True, max_msg_size=4096
-            )
+            async with asyncio.timeout(CONNECTION_TIMEOUT_SECONDS):
+                self._websocket = await self._session.ws_connect(
+                    self._url("/ws"), heartbeat=20, autoping=True, max_msg_size=4096
+                )
         except (TimeoutError, ClientError) as exc:
             raise SmartGrindConnectionError(f"Cannot connect to {self.host}") from exc
 
@@ -158,10 +161,11 @@ class SmartGrindClient:
             await self.async_command("select_profile", profile=profile)
         else:
             try:
-                async with self._session.post(
-                    self._url("/api/v1/profile"), data={"profile": str(profile)}
-                ) as response:
-                    response.raise_for_status()
+                async with asyncio.timeout(CONNECTION_TIMEOUT_SECONDS):
+                    async with self._session.post(
+                        self._url("/api/v1/profile"), data={"profile": str(profile)}
+                    ) as response:
+                        response.raise_for_status()
             except (TimeoutError, ClientError) as exc:
                 raise SmartGrindConnectionError("Could not select profile") from exc
         await self.async_get_settings()

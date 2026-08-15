@@ -1,11 +1,18 @@
 """Tests for loading Smart Grind in Home Assistant."""
 
+from unittest.mock import AsyncMock, patch
+
+import pytest
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.smart_grind import async_setup_entry
 from custom_components.smart_grind.const import CONF_DEVICE_ID, DOMAIN
+from custom_components.smart_grind.coordinator import SmartGrindCoordinator
+from custom_components.smart_grind.models import SmartGrindConnectionError
 
 
 async def test_setup_creates_device_entities(hass: HomeAssistant, mock_coordinator_start) -> None:
@@ -39,3 +46,25 @@ async def test_setup_creates_device_entities(hass: HomeAssistant, mock_coordinat
         "684a8d858428_profile",
         "684a8d858428_grind_mode",
     }
+
+
+async def test_setup_retries_when_grinder_is_offline(hass: HomeAssistant) -> None:
+    """An unavailable grinder is a retryable setup condition."""
+    entry = MockConfigEntry(
+        domain=DOMAIN,
+        title="Smart Grind by Weight",
+        unique_id="68:4a:8d:85:84:28",
+        data={
+            CONF_HOST: "192.0.2.10",
+            CONF_PORT: 80,
+            CONF_DEVICE_ID: "68:4a:8d:85:84:28",
+        },
+    )
+    entry.add_to_hass(hass)
+
+    with patch.object(
+        SmartGrindCoordinator,
+        "async_start",
+        AsyncMock(side_effect=SmartGrindConnectionError("offline")),
+    ), pytest.raises(ConfigEntryNotReady, match="unavailable"):
+        await async_setup_entry(hass, entry)

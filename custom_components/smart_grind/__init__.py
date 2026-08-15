@@ -5,11 +5,14 @@ from __future__ import annotations
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import CONF_HOST, CONF_PORT
 from homeassistant.core import HomeAssistant
+from homeassistant.exceptions import ConfigEntryNotReady
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
+from homeassistant.helpers.update_coordinator import UpdateFailed
 
 from .client import SmartGrindClient
 from .const import DEFAULT_PORT, PLATFORMS
 from .coordinator import SmartGrindCoordinator
+from .models import SmartGrindError
 
 SmartGrindConfigEntry = ConfigEntry[SmartGrindCoordinator]
 
@@ -22,7 +25,10 @@ async def async_setup_entry(hass: HomeAssistant, entry: SmartGrindConfigEntry) -
         entry.data.get(CONF_PORT, DEFAULT_PORT),
     )
     coordinator = SmartGrindCoordinator(hass, client)
-    await coordinator.async_start()
+    try:
+        await coordinator.async_start()
+    except (SmartGrindError, UpdateFailed) as exc:
+        raise ConfigEntryNotReady("Smart Grind is unavailable") from exc
     entry.runtime_data = coordinator
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
     return True

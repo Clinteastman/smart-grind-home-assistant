@@ -2,7 +2,8 @@
   "config": {
     "abort": {
       "already_configured": "This grinder is already configured.",
-      "cannot_connect": "Could not connect to the discovered grinder."
+      "cannot_connect": "Could not connect to the discovered grinder.",
+      "wrong_device": "The address belongs to a different grinder."
     },
     "error": {
       "cannot_connect": "Could not connect to the grinder.",

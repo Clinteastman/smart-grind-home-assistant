@@ -63,6 +63,10 @@ SMART_GRIND_LIVE_DEVICE_ID=684a8d858428 \
 .venv/bin/pytest -m live tests/test_live_grinder.py
 ```
 
+To verify two-way command acknowledgement as well, set `SMART_GRIND_LIVE_COMMAND_TEST=1`.
+The test first proves the grinder is idle and its motor is off, then sends only a `stop`
+request and expects the firmware to reject it as already inactive. It never starts the motor.
+
 ## Related projects and credits
 
 - [Smart Grind by Weight maintained community firmware](https://github.com/Clinteastman/smart-grind-by-weight)

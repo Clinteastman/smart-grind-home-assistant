@@ -13,9 +13,11 @@ from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import MockConfigEntry
 
 from custom_components.smart_grind.const import CONF_DEVICE_ID, DOMAIN
+from custom_components.smart_grind.models import SmartGrindCommandError
 
 LIVE_HOST = os.environ.get("SMART_GRIND_LIVE_HOST")
 LIVE_DEVICE_ID = os.environ.get("SMART_GRIND_LIVE_DEVICE_ID", "684a8d858428")
+LIVE_COMMAND_TEST = os.environ.get("SMART_GRIND_LIVE_COMMAND_TEST") == "1"
 
 pytestmark = [
     pytest.mark.live,
@@ -44,8 +46,19 @@ async def test_live_grinder_loads_and_publishes_state(
         assert await hass.config_entries.async_setup(entry.entry_id)
 
     coordinator = entry.runtime_data
-    assert coordinator.client.status is not None
-    assert coordinator.client.status.device_id == LIVE_DEVICE_ID.replace(":", "")
+    status = coordinator.client.status
+    assert status is not None
+    assert status.device_id == LIVE_DEVICE_ID.replace(":", "")
+    assert status.protocol == 1
+    assert status.commands >= {
+        "start",
+        "start_manual",
+        "stop",
+        "dismiss",
+        "tare",
+        "select_profile",
+        "set_mode",
+    }
     assert coordinator.data is not None
     assert coordinator.data.phase in {"idle", "grinding", "stopping", "completed", "timeout"}
 
@@ -55,6 +68,7 @@ async def test_live_grinder_loads_and_publishes_state(
         for entity in registry.entities.values()
         if entity.config_entry_id == entry.entry_id
     }
+    assert len(entity_ids) == 16
     assert any(
         entity_id.startswith("sensor.smart_grind_by_weight_weight") for entity_id in entity_ids
     )
@@ -65,5 +79,11 @@ async def test_live_grinder_loads_and_publishes_state(
     assert any(
         entity_id.startswith("select.smart_grind_by_weight_profile") for entity_id in entity_ids
     )
+
+    if LIVE_COMMAND_TEST:
+        assert coordinator.data.phase == "idle"
+        assert coordinator.data.motor_running is False
+        with pytest.raises(SmartGrindCommandError, match="grinder is not active"):
+            await coordinator.async_command("stop")
 
     assert await hass.config_entries.async_unload(entry.entry_id)

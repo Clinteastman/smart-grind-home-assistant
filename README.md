@@ -23,12 +23,12 @@ All start and stop requests pass through the firmware's existing grind controlle
 ## Requirements
 
 - Home Assistant 2026.6 or newer
-- Smart Grind by Weight firmware containing the Home Assistant protocol additions (the first compatible firmware release will be linked here)
+- [Smart Grind by Weight firmware v1.5.3](https://github.com/Clinteastman/smart-grind-by-weight/releases/tag/v1.5.3) or newer
 - Home Assistant and the grinder on the same local network, with mDNS allowed between them
 
 The basic live sensors and selected-profile start/stop controls can also communicate with firmware v1.5.2, but manual start, tare, correlated acknowledgements, and mode selection require the matching newer firmware.
 
-## Installation during development
+## Installation
 
 1. In HACS, open **Integrations**, choose **Custom repositories**, and add:
    `https://github.com/Clinteastman/smart-grind-home-assistant`

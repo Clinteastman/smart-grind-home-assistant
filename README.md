@@ -55,6 +55,14 @@ python3 -m venv .venv
 
 HACS validation and Hassfest run in GitHub Actions. See [AGENTS.md](AGENTS.md) for the firmware/integration boundary and safety rules.
 
+An opt-in read-only acceptance test can load the integration against a physical grinder without sending any control command:
+
+```bash
+SMART_GRIND_LIVE_HOST=192.168.50.160 \
+SMART_GRIND_LIVE_DEVICE_ID=684a8d858428 \
+.venv/bin/pytest -m live tests/test_live_grinder.py
+```
+
 ## Related projects and credits
 
 - [Smart Grind by Weight maintained community firmware](https://github.com/Clinteastman/smart-grind-by-weight)

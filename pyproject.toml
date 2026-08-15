@@ -18,6 +18,7 @@ test = [
 [tool.pytest.ini_options]
 addopts = "--strict-markers --cov=custom_components.smart_grind --cov-report=term-missing"
 asyncio_mode = "auto"
+markers = ["live: requires an explicitly configured grinder on the local network"]
 testpaths = ["tests"]
 
 [tool.ruff]

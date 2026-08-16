@@ -2,8 +2,12 @@
 
 A native, local-push Home Assistant integration for the maintained [Smart Grind by Weight firmware](https://github.com/Clinteastman/smart-grind-by-weight). It discovers the grinder automatically on the local network and communicates directly with it—no cloud account and no MQTT broker.
 
-[![Release](https://img.shields.io/github/v/release/Clinteastman/smart-grind-home-assistant)](https://github.com/Clinteastman/smart-grind-home-assistant/releases/latest)
+[![Release](https://img.shields.io/github/v/release/Clinteastman/smart-grind-home-assistant?display_name=tag&logo=github)](https://github.com/Clinteastman/smart-grind-home-assistant/releases/latest)
 [![Validate](https://github.com/Clinteastman/smart-grind-home-assistant/actions/workflows/validate.yml/badge.svg)](https://github.com/Clinteastman/smart-grind-home-assistant/actions/workflows/validate.yml)
+[![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5?logo=home-assistant&logoColor=white)](#installation)
+[![Home Assistant](https://img.shields.io/badge/Home%20Assistant-2026.6%2B-18BCF2?logo=home-assistant&logoColor=white)](https://www.home-assistant.io/)
+[![IoT class: Local Push](https://img.shields.io/badge/IoT%20class-Local%20Push-2ea44f)](#network-behaviour)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## What it provides
 

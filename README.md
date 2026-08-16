@@ -9,6 +9,12 @@ A native, local-push Home Assistant integration for the maintained [Smart Grind 
 [![IoT class: Local Push](https://img.shields.io/badge/IoT%20class-Local%20Push-2ea44f)](#network-behaviour)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
+> [!TIP]
+> **Need the grinder firmware?** This integration pairs with the maintained
+> V1/V2 firmware, web interface and one-click installer in
+> **[Smart Grind by Weight →](https://github.com/Clinteastman/smart-grind-by-weight)**.
+> **[Flash the latest firmware →](https://clinteastman.github.io/smart-grind-by-weight/)**
+
 ## What it provides
 
 - Automatic discovery through the grinder's `_smartgrind._tcp` mDNS service

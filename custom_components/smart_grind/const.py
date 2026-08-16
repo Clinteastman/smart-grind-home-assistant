@@ -13,4 +13,5 @@ PLATFORMS: Final = ["binary_sensor", "button", "select", "sensor"]
 
 WS_RECONNECT_MIN_SECONDS: Final = 1.0
 WS_RECONNECT_MAX_SECONDS: Final = 30.0
+WS_UNAVAILABLE_GRACE_SECONDS: Final = 10.0
 COMMAND_TIMEOUT_SECONDS: Final = 5.0

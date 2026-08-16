@@ -11,7 +11,12 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .client import SmartGrindClient
-from .const import DOMAIN, WS_RECONNECT_MAX_SECONDS, WS_RECONNECT_MIN_SECONDS
+from .const import (
+    DOMAIN,
+    WS_RECONNECT_MAX_SECONDS,
+    WS_RECONNECT_MIN_SECONDS,
+    WS_UNAVAILABLE_GRACE_SECONDS,
+)
 from .models import SmartGrindError, SmartGrindState
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,6 +33,7 @@ class SmartGrindCoordinator(DataUpdateCoordinator[SmartGrindState]):
         self._first_state = asyncio.Event()
         self._last_publish = 0.0
         self._last_semantic_state: tuple[object, ...] | None = None
+        self._disconnect_started: float | None = None
 
     async def async_start(self) -> None:
         """Validate the device and start its reconnecting listener."""
@@ -54,12 +60,27 @@ class SmartGrindCoordinator(DataUpdateCoordinator[SmartGrindState]):
             except asyncio.CancelledError:
                 raise
             except SmartGrindError as exc:
-                self.async_set_update_error(UpdateFailed(str(exc)))
+                self._handle_connection_error(exc)
                 await asyncio.sleep(delay)
                 delay = min(delay * 2, WS_RECONNECT_MAX_SECONDS)
 
+    def _handle_connection_error(self, error: SmartGrindError) -> None:
+        """Keep brief reconnects from making every entity flicker unavailable."""
+        now = monotonic()
+        if self._disconnect_started is None:
+            self._disconnect_started = now
+        disconnected_for = now - self._disconnect_started
+        if disconnected_for < WS_UNAVAILABLE_GRACE_SECONDS:
+            _LOGGER.debug(
+                "Smart Grind push connection interrupted; reconnecting within grace period"
+            )
+            return
+        self.async_set_update_error(UpdateFailed(str(error)))
+
     async def _async_receive_state(self, state: SmartGrindState) -> None:
         """Publish push data at a recorder-friendly rate and on semantic changes."""
+        connection_recovered = self._disconnect_started is not None
+        self._disconnect_started = None
         now = monotonic()
         semantic_state = (
             state.active,
@@ -73,6 +94,8 @@ class SmartGrindCoordinator(DataUpdateCoordinator[SmartGrindState]):
         interval = 0.25 if state.active else 2.0
         if (
             self.data is None
+            or connection_recovered
+            or not self.last_update_success
             or semantic_state != self._last_semantic_state
             or now - self._last_publish >= interval
         ):

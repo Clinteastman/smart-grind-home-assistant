@@ -2,7 +2,8 @@
 
 A native, local-push Home Assistant integration for the maintained [Smart Grind by Weight firmware](https://github.com/Clinteastman/smart-grind-by-weight). It discovers the grinder automatically on the local network and communicates directly with it—no cloud account and no MQTT broker.
 
-> **Development status:** the integration and its matching firmware protocol are under active development. Do not install this repository on a production Home Assistant system until the first tagged release is published.
+[![Release](https://img.shields.io/github/v/release/Clinteastman/smart-grind-home-assistant)](https://github.com/Clinteastman/smart-grind-home-assistant/releases/latest)
+[![Validate](https://github.com/Clinteastman/smart-grind-home-assistant/actions/workflows/validate.yml/badge.svg)](https://github.com/Clinteastman/smart-grind-home-assistant/actions/workflows/validate.yml)
 
 ## What it provides
 

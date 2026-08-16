@@ -1,6 +1,6 @@
 # Changelog
 
-## [0.1.0] - 2026-08-15
+## [0.1.0] - 2026-08-16
 
 - Added automatic `_smartgrind._tcp` discovery and manual IP/hostname setup.
 - Added a resilient local-push WebSocket connection with stable device identity,
